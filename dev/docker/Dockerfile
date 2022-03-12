@@ -11,8 +11,12 @@ RUN apt-get update -y \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && a2enmod rewrite \
+    && a2enmod headers \
     && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
-    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
+    && echo "Header set Access-Control-Allow-Origin \"http://localhost:3000\"" >> /etc/apache2/apache2.conf \
+    && echo "Header set Access-Control-Allow-Headers \"*\"" >> /etc/apache2/apache2.conf \
+    && echo "Header set Access-Control-Allow-Methods \"POST, GET, DELETE, PUT, PATCH, OPTIONS\"" >> /etc/apache2/apache2.conf
 
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
